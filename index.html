@@ -7,10 +7,6 @@
 <meta name="description" content="Mobile mechanic serving all of Habersham County, GA. Tucker comes to your home, office, or roadside. Licensed, insured, zero parts markup. Call (706) 491-6989.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Barlow+Condensed:wght@400;600;700&display=swap" rel="stylesheet">
-<!-- Calendly widget stylesheet -->
-<link href="https://assets.calendly.com/assets/external/widget.css" rel="stylesheet">
-<!-- Calendly widget script — loaded async, non-blocking -->
-<script src="https://assets.calendly.com/assets/external/widget.js" async></script>
 <style>
 :root {
   --black:#080808; --charcoal:#141414; --steel:#242424;
@@ -631,30 +627,115 @@ footer{background:var(--black);border-top:1px solid var(--border-dim);padding:64
 <a class="sticky-mob" href="tel:+17064916989">📞 Call Now — Free Estimate</a>
 
 <!-- BOOKING MODAL -->
-<!-- Calendly inline widget placeholder (hidden; popup is used instead) -->
+<div class="modal-overlay" id="booking-modal">
+  <div class="modal">
+    <div class="modal-head">
+      <div class="modal-head-title">📅 Book an Appointment</div>
+      <div class="modal-head-sub">Fill out the form — Tucker will call to confirm your time</div>
+      <button class="modal-close" onclick="closeBooking()" aria-label="Close">✕</button>
+    </div>
+    <div class="modal-body" id="booking-form-body">
+      <div class="bk-row">
+        <div class="bk-group">
+          <label class="bk-label" for="bk-name">Your Name</label>
+          <input class="bk-input" id="bk-name" type="text" placeholder="John Smith" autocomplete="name">
+        </div>
+        <div class="bk-group">
+          <label class="bk-label" for="bk-phone">Phone Number</label>
+          <input class="bk-input" id="bk-phone" type="tel" placeholder="(706) 555-0100" autocomplete="tel">
+        </div>
+      </div>
+      <div class="bk-group">
+        <label class="bk-label" for="bk-email">Email Address</label>
+        <input class="bk-input" id="bk-email" type="email" placeholder="you@email.com" autocomplete="email">
+      </div>
+      <div class="bk-row">
+        <div class="bk-group">
+          <label class="bk-label" for="bk-make">Car Make &amp; Model</label>
+          <input class="bk-input" id="bk-make" type="text" placeholder="e.g. 2019 Toyota Camry">
+        </div>
+        <div class="bk-group">
+          <label class="bk-label" for="bk-vin">VIN Number <span style="font-weight:400;opacity:.6;">(optional)</span></label>
+          <input class="bk-input" id="bk-vin" type="text" placeholder="17-character VIN" maxlength="17" style="text-transform:uppercase;" oninput="this.value=this.value.toUpperCase()">
+        </div>
+      </div>
+      <div class="bk-group">
+        <label class="bk-label" for="bk-service">Service Needed</label>
+        <select class="bk-select" id="bk-service">
+          <option value="" disabled selected>Select a service…</option>
+          <option value="Oil Change">🌡️ Oil Change</option>
+          <option value="Brake Service">🛞 Brake Service (Pads / Rotors / Calipers)</option>
+          <option value="Battery Replacement">🔋 Battery Replacement</option>
+          <option value="Alternator or Starter">⚡ Alternator or Starter</option>
+          <option value="Check Engine / Diagnostics">🔍 Check Engine / Diagnostics</option>
+          <option value="Belts & Hoses">🔧 Belts &amp; Hoses</option>
+          <option value="Filters (Air / Cabin / Fuel)">🌬️ Filters (Air / Cabin / Fuel)</option>
+          <option value="Cooling System / Thermostat">❄️ Cooling System / Thermostat</option>
+          <option value="Suspension / Steering">🚗 Suspension / Steering</option>
+          <option value="Pre-Purchase Inspection">🔎 Pre-Purchase Inspection</option>
+          <option value="General Repair / Not Sure">🛠️ General Repair / Not Sure</option>
+          <option value="Other">✏️ Other (describe below)</option>
+        </select>
+      </div>
+      <div class="bk-group">
+        <label class="bk-label" for="bk-notes">Additional Details <span style="font-weight:400;opacity:.6;">(optional)</span></label>
+        <textarea class="bk-textarea" id="bk-notes" placeholder="Describe the issue, your location in Habersham County, or any preferred days/times…"></textarea>
+      </div>
+      <hr class="bk-divider">
+      <p class="bk-note">Tucker will call or text you at the number above to confirm your appointment. No payment required to book.</p>
+      <button class="bk-submit" onclick="submitBooking()">Send Appointment Request →</button>
+    </div>
+  </div>
+</div>
 
 <script>
-/**
- * openBooking — triggers the Calendly popup scheduler.
- * Falls back to opening the scheduling URL in a new tab if the
- * Calendly widget script has not yet finished loading.
- *
- * Calendly account : tuckersmobilemechanic
- * Event type       : 30 Minute Meeting (30min)
- */
-const CALENDLY_URL = 'https://calendly.com/tuckersmobilemechanic/30min';
-
 function openBooking() {
-  if (typeof Calendly !== 'undefined' && Calendly.initPopupWidget) {
-    // Widget loaded — open the smooth popup overlay
-    Calendly.initPopupWidget({ url: CALENDLY_URL });
-  } else {
-    // Fallback: open scheduling page in a new tab (no page reload)
-    window.open(CALENDLY_URL, '_blank', 'noopener,noreferrer');
-  }
+  document.getElementById('booking-modal').classList.add('open');
+  document.body.style.overflow = 'hidden';
 }
+function closeBooking() {
+  document.getElementById('booking-modal').classList.remove('open');
+  document.body.style.overflow = '';
+}
+document.getElementById('booking-modal').addEventListener('click', function(e) {
+  if (e.target === this) closeBooking();
+});
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') closeBooking();
+});
+function submitBooking() {
+  const name    = document.getElementById('bk-name').value.trim();
+  const phone   = document.getElementById('bk-phone').value.trim();
+  const email   = document.getElementById('bk-email').value.trim();
+  const make    = document.getElementById('bk-make').value.trim();
+  const vin     = document.getElementById('bk-vin').value.trim();
+  const service = document.getElementById('bk-service').value;
+  const notes   = document.getElementById('bk-notes').value.trim();
 
-// Calendly handles its own Escape key / close behavior natively.
+  if (!name || !phone || !make || !service) {
+    alert('Please fill in your name, phone number, vehicle, and the service needed.');
+    return;
+  }
+
+  // Build a notes string to pass as the Calendly "a1" custom answer
+  const details = [
+    'Phone: ' + phone,
+    'Vehicle: ' + make,
+    vin ? 'VIN: ' + vin : '',
+    'Service: ' + service,
+    notes ? 'Notes: ' + notes : ''
+  ].filter(Boolean).join(' | ');
+
+  const base = 'https://calendly.com/tuckersmobilemechanic/30min';
+  const params = new URLSearchParams({
+    name:  name,
+    email: email || '',
+    a1:    details   // Calendly passes custom answers as a1, a2, etc.
+  });
+
+  closeBooking();
+  window.open(base + '?' + params.toString(), '_blank', 'noopener,noreferrer');
+}
 function showPage(name,anchor){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.getElementById('page-'+name).classList.add('active');
